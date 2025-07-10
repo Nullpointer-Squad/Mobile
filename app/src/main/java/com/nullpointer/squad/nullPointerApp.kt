@@ -1,7 +1,6 @@
 package com.nullpointer.squad
 
 import android.app.Application
-import com.google.android.libraries.places.api.net.PlacesClient
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp

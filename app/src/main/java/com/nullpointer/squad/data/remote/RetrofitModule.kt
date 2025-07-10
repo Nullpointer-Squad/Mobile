@@ -1,16 +1,15 @@
 package com.nullpointer.squad.data.remote
 
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import okhttp3.OkHttpClient
-
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
