@@ -1,49 +1,43 @@
 package com.nullpointer.squad
 
 import android.os.Bundle
+import android.view.View
+import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.fragment.app.FragmentContainerView
+import androidx.navigation.fragment.NavHostFragment
 import com.nullpointer.squad.ui.theme.NullpointerSquadTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+    private val navHostFragmentId = View.generateViewId()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            NullpointerSquadTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+
+        // This sets the XML layout containing the FragmentContainerView
+        setContentView(R.layout.activity_main)
+
+        // Only create NavHostFragment once
+        if (savedInstanceState == null) {
+            val navHost = NavHostFragment.create(R.navigation.nav_graph)
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.nav_host_fragment, navHost)
+                .setPrimaryNavigationFragment(navHost)
+                .commitNow()
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    NullpointerSquadTheme {
-        Greeting("Android")
     }
 }
