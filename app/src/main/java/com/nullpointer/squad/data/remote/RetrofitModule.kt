@@ -3,6 +3,7 @@ package com.nullpointer.squad.data.remote
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.nullpointer.squad.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,18 +18,15 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RetrofitModule {
 
-    @Provides
-    fun provideBaseUrl(): String = "https://your-api.com/" // Replace with actual URL
+    private const val EXCHANGE_BASE_URL = BuildConfig.EXCHANGE_RATE_BASE_URL
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
-            .build()
-    }
+    fun provideOkHttp(): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        })
+        .build()
 
     @Provides
     @Singleton
@@ -36,21 +34,37 @@ object RetrofitModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(
-        baseUrl: String,
-        okHttpClient: OkHttpClient,
-        gson: Gson
-    ): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-    }
+    fun provideMainRetrofit(
+        gson: Gson,
+        client: OkHttpClient
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(BuildConfig.BASE_URL)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
+
+    @Provides
+    @Singleton
+    @ExchangeRatesApi
+    fun provideExchangeRetrofit(
+        gson: Gson,
+        client: OkHttpClient
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(EXCHANGE_BASE_URL)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
 
     @Provides
     @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService =
         retrofit.create(ApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideExchangeRateApi(
+        @ExchangeRatesApi retrofit: Retrofit
+    ): ExchangeRateApi = retrofit.create(ExchangeRateApi::class.java)
 }
+
 
