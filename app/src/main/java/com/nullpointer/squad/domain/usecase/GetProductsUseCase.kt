@@ -9,7 +9,6 @@ class GetProductsUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         page: Int = 1,
-        pageSize: Int = 20,
-        category: String? = null
-    ): List<Product> = repository.getProducts(page,pageSize,category)
+        pageSize: Int = 50,
+    ): Product = repository.getProducts(page,pageSize)
 }
